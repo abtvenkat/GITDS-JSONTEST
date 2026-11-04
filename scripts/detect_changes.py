@@ -32,14 +32,14 @@ def run_git_command(args):
 
 
 def is_valid_artifact_path(path_str):
-    """Checks if path matches artifacts/<type>/<name>.json."""
+    """Checks if path is under artifacts/<type>/.../<name>.json (supports nested folders)."""
     norm = Path(path_str).as_posix()
     parts = norm.split("/")
     return (
-        len(parts) == 3 and
+        len(parts) >= 3 and
         parts[0] == "artifacts" and
-        parts[2].lower().endswith(".json") and
-        not parts[2].startswith(".")
+        parts[-1].lower().endswith(".json") and
+        not parts[-1].startswith(".")
     )
 
 
@@ -66,20 +66,22 @@ def extract_artifact_info(path_str, status_char):
 
 
 def detect_all_artifacts():
-    """Scans all JSON files currently present in artifacts/."""
+    """Scans all JSON files currently present in artifacts/ (including subfolders)."""
     artifacts = []
     artifacts_dir = Path("artifacts")
     if not artifacts_dir.exists():
         return artifacts
 
-    for file_path in artifacts_dir.glob("*/*.json"):
+    for file_path in artifacts_dir.rglob("*.json"):
         if file_path.is_file() and not file_path.name.startswith("."):
-            artifacts.append({
-                "file_path": file_path.as_posix(),
-                "artifact_type": file_path.parent.name,
-                "technical_name": file_path.stem,
-                "change_type": "existing"
-            })
+            norm_parts = file_path.as_posix().split("/")
+            if len(norm_parts) >= 3 and norm_parts[0] == "artifacts":
+                artifacts.append({
+                    "file_path": file_path.as_posix(),
+                    "artifact_type": norm_parts[1],
+                    "technical_name": file_path.stem,
+                    "change_type": "existing"
+                })
     return artifacts
 
 
