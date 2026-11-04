@@ -40,11 +40,11 @@ def run_cli_command(command_parts, dry_run=False, mask_secrets=True):
     try:
         start_time = time.time()
         result = subprocess.run(
-            command_parts,
+            display_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            shell=True  # Required for npx/datasphere on Windows runners
+            shell=True
         )
         duration = round(time.time() - start_time, 2)
         print(f"[CLI FINISHED in {duration}s] Exit code: {result.returncode}")

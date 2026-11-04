@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # Fetch at least 2 commits to enable diff against previous commit
+          fetch-depth: 0 # Full history ensures git diff always resolves base commit
 
       - name: Set up Python
         uses: actions/setup-python@v5
