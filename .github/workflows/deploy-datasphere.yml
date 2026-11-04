@@ -122,3 +122,4 @@ jobs:
             --input changed_artifacts.json \
             --config config/deployment.json \
             --space "$DSP_SPACE_ID"
+
