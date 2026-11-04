@@ -1,0 +1,124 @@
+name: Deploy SAP Datasphere Artifacts
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'artifacts/**'
+  workflow_dispatch:
+    inputs:
+      deploy_all:
+        description: 'Deploy all artifacts (ignore git diff)'
+        required: false
+        type: boolean
+        default: false
+      dry_run:
+        description: 'Dry run (simulate without live deployment)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: datasphere-deployment-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Validate and Deploy to SAP Datasphere DEV Space
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Fetch at least 2 commits to enable diff against previous commit
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Pinned SAP Datasphere CLI
+        run: |
+          npm ci || npm install --no-audit
+
+      - name: Detect Changed Artifacts
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_all }}" = "true" ]; then
+            python3 scripts/detect_changes.py --all --output changed_artifacts.json
+          else
+            # For push events, compare previous commit to current HEAD
+            BASE_SHA="${{ github.event.before }}"
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+              BASE_SHA="HEAD~1"
+            fi
+            python3 scripts/detect_changes.py --base "$BASE_SHA" --head "HEAD" --output changed_artifacts.json
+          fi
+
+      - name: Check If Artifact Changes Exist
+        id: check_changes
+        run: |
+          COUNT=$(jq '. | length' changed_artifacts.json)
+          echo "Changed artifact count: $COUNT"
+          if [ "$COUNT" -eq 0 ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No artifact changes detected in this commit."
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate JSON Artifacts
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          python3 scripts/validate_json.py --input changed_artifacts.json --config config/deployment.json
+
+      - name: Authenticate with SAP Datasphere CLI
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          DSP_HOST: ${{ secrets.DSP_HOST }}
+          DSP_CLIENT_ID: ${{ secrets.DSP_CLIENT_ID }}
+          DSP_CLIENT_SECRET: ${{ secrets.DSP_CLIENT_SECRET }}
+          DSP_TOKEN_URL: ${{ secrets.DSP_TOKEN_URL }}
+        run: |
+          echo "Authenticating non-interactively with SAP Datasphere via OAuth client_credentials..."
+          
+          if [ -z "$DSP_HOST" ] || [ -z "$DSP_CLIENT_ID" ] || [ -z "$DSP_CLIENT_SECRET" ] || [ -z "$DSP_TOKEN_URL" ]; then
+            echo "::error::Missing required SAP Datasphere secrets (DSP_HOST, DSP_CLIENT_ID, DSP_CLIENT_SECRET, DSP_TOKEN_URL)."
+            exit 1
+          fi
+
+          # Login non-interactively with client_credentials flow (-F forces cache overwrite)
+          npx datasphere login \
+            --host "$DSP_HOST" \
+            --authorization-flow client_credentials \
+            --token-url "$DSP_TOKEN_URL" \
+            --client-id "$DSP_CLIENT_ID" \
+            --client-secret "$DSP_CLIENT_SECRET" \
+            -F
+
+          echo "Authentication and cache initialization completed successfully."
+
+      - name: Deploy Artifacts to Datasphere Space
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          DSP_SPACE_ID: ${{ secrets.DSP_SPACE_ID }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          if [ -z "$DSP_SPACE_ID" ]; then
+            echo "::error::Missing required secret DSP_SPACE_ID."
+            exit 1
+          fi
+
+          echo "Deploying artifacts into SAP Datasphere Space: $DSP_SPACE_ID"
+          python3 scripts/deploy.py \
+            --input changed_artifacts.json \
+            --config config/deployment.json \
+            --space "$DSP_SPACE_ID"

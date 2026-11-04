@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "artifact_mapping": {
+    "local-tables": {
+      "cli_command": "objects local-tables",
+      "deployment_priority": 1,
+      "description": "Local Table definitions"
+    },
+    "remote-tables": {
+      "cli_command": "objects remote-tables",
+      "deployment_priority": 2,
+      "description": "Remote Table definitions"
+    },
+    "views": {
+      "cli_command": "objects views",
+      "deployment_priority": 3,
+      "description": "SQL and Graphical Views"
+    },
+    "analytic-models": {
+      "cli_command": "objects analytic-models",
+      "deployment_priority": 4,
+      "description": "Analytic Models"
+    }
+  },
+  "settings": {
+    "default_space": "DEV",
+    "auto_deploy": true,
+    "verbose": true
+  }
+}

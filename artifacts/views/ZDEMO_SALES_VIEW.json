@@ -1,0 +1,34 @@
+{
+  "$version": "2.0",
+  "definitions": {
+    "ZDEMO_SALES_VIEW": {
+      "kind": "entity",
+      "@EndUserText.label": "Demo Sales View",
+      "@DataWarehouse.consumption.external": true,
+      "elements": {
+        "SALES_ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "@EndUserText.label": "Sales ID"
+        },
+        "CUSTOMER_NAME": {
+          "type": "cds.String",
+          "length": 100,
+          "@EndUserText.label": "Customer Name"
+        },
+        "NET_AMOUNT": {
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 2,
+          "@EndUserText.label": "Net Amount"
+        },
+        "CURRENCY_CODE": {
+          "type": "cds.String",
+          "length": 3,
+          "@EndUserText.label": "Currency Code"
+        }
+      }
+    }
+  }
+}
