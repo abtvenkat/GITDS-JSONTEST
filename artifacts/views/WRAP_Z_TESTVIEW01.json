@@ -1,0 +1,101 @@
+{
+  "definitions": {
+    "WRAP_Z_TESTVIEW01": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source Z_TESTVIEW01.",
+      "elements": {
+        "BillingDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "Billing document",
+          "length": 10,
+          "key": true
+        },
+        "BillingDocumentItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "Billing item",
+          "length": 6,
+          "key": true
+        },
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material number",
+          "length": 40
+        },
+        "Plant": {
+          "type": "cds.String",
+          "@EndUserText.label": "Plant",
+          "length": 4
+        },
+        "ServicesRenderedDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "Date on which services are rendered",
+          "length": 8
+        },
+        "BillingPerformancePeriodEndDte": {
+          "type": "cds.String",
+          "@EndUserText.label": "Period of performance end date",
+          "length": 8
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "RAD_S3X.Z_TESTVIEW01"
+            ],
+            "as": "Z_TESTVIEW01"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "BillingDocument"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "BillingDocumentItem"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "Material"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "Plant"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "ServicesRenderedDate"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW01",
+                "BillingPerformancePeriodEndDte"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
