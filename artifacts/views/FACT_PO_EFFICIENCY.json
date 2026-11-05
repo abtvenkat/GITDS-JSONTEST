@@ -1,0 +1,547 @@
+{
+  "definitions": {
+    "FACT_PO_EFFICIENCY": {
+      "kind": "entity",
+      "@EndUserText.label": "L3 terminal Fact view joining header and item projections and embedding row-level calculated metrics",
+      "elements": {
+        "BillingDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "BillingDocument",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "BillingDocumentItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "BillingDocumentItem",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CreationDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "CreationDate",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "ServicesRenderedDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "ServicesRenderedDate",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Plant": {
+          "type": "cds.String",
+          "@EndUserText.label": "Plant",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesDocument",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "BillingDocumentDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "BillingDocumentDate",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "@EndUserText.label": "CompanyCode",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrganization": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrganization",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CreatedByUser": {
+          "type": "cds.String",
+          "@EndUserText.label": "CreatedByUser",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "ProcessingTimeDays": {
+          "type": "cds.Integer",
+          "@EndUserText.label": "Processing Time (Days)",
+          "@DataWarehouse.native.dataType": "INTEGER",
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "AVG"
+          }
+        },
+        "IsCompletedPO": {
+          "type": "cds.Integer",
+          "@EndUserText.label": "Completed PO Indicator",
+          "@DataWarehouse.native.dataType": "INTEGER",
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "IsDelayedPO": {
+          "type": "cds.Integer",
+          "@EndUserText.label": "Delayed PO Indicator",
+          "@DataWarehouse.native.dataType": "INTEGER",
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "POCount": {
+          "type": "cds.Integer",
+          "@EndUserText.label": "PO Count",
+          "@DataWarehouse.native.dataType": "INTEGER",
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "SELECT": {
+              "from": {
+                "SELECT": {
+                  "from": {
+                    "join": "LEFT",
+                    "args": [
+                      {
+                        "ref": [
+                          "WRAP_SRC_Z_TESTVIEW01"
+                        ],
+                        "as": "WRAP_SRC_Z_TESTVIEW01"
+                      },
+                      {
+                        "ref": [
+                          "WRAP_SRC_Z_TESTVIEW02"
+                        ],
+                        "as": "WRAP_SRC_Z_TESTVIEW02"
+                      }
+                    ],
+                    "on": [
+                      {
+                        "ref": [
+                          "WRAP_SRC_Z_TESTVIEW01",
+                          "BillingDocument"
+                        ]
+                      },
+                      "=",
+                      {
+                        "ref": [
+                          "WRAP_SRC_Z_TESTVIEW02",
+                          "BillingDocument"
+                        ]
+                      }
+                    ]
+                  },
+                  "columns": [
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "BillingDocument"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "BillingDocumentItem"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "CreationDate"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "ServicesRenderedDate"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "Material"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "Plant"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW01",
+                        "SalesDocument"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW02",
+                        "BillingDocumentDate"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW02",
+                        "CompanyCode"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW02",
+                        "SalesOrganization"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_SRC_Z_TESTVIEW02",
+                        "CreatedByUser"
+                      ]
+                    }
+                  ]
+                },
+                "as": "Source Columns 1"
+              },
+              "columns": [
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "BillingDocument"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "BillingDocumentItem"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "CreationDate"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "ServicesRenderedDate"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "Material"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "Plant"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "SalesDocument"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "BillingDocumentDate"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "CompanyCode"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "SalesOrganization"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "CreatedByUser"
+                  ]
+                },
+                {
+                  "as": "ProcessingTimeDays",
+                  "xpr": [
+                    {
+                      "func": "DAYS_BETWEEN",
+                      "args": [
+                        {
+                          "func": "TO_DATE",
+                          "args": [
+                            {
+                              "ref": [
+                                "Source Columns 1",
+                                "CreationDate"
+                              ]
+                            },
+                            {
+                              "val": "YYYYMMDD"
+                            }
+                          ]
+                        },
+                        {
+                          "func": "TO_DATE",
+                          "args": [
+                            {
+                              "ref": [
+                                "Source Columns 1",
+                                "ServicesRenderedDate"
+                              ]
+                            },
+                            {
+                              "val": "YYYYMMDD"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "as": "IsCompletedPO",
+                  "xpr": [
+                    "case",
+                    "when",
+                    {
+                      "xpr": [
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "ServicesRenderedDate"
+                          ]
+                        },
+                        "is not",
+                        {
+                          "val": null
+                        }
+                      ]
+                    },
+                    "and",
+                    {
+                      "xpr": [
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "ServicesRenderedDate"
+                          ]
+                        },
+                        "<>",
+                        {
+                          "val": ""
+                        }
+                      ]
+                    },
+                    "then",
+                    {
+                      "val": 1
+                    },
+                    "else",
+                    {
+                      "val": 0
+                    },
+                    "end"
+                  ]
+                },
+                {
+                  "as": "IsDelayedPO",
+                  "xpr": [
+                    "case",
+                    "when",
+                    {
+                      "func": "DAYS_BETWEEN",
+                      "args": [
+                        {
+                          "func": "TO_DATE",
+                          "args": [
+                            {
+                              "ref": [
+                                "Source Columns 1",
+                                "CreationDate"
+                              ]
+                            },
+                            {
+                              "val": "YYYYMMDD"
+                            }
+                          ]
+                        },
+                        {
+                          "func": "TO_DATE",
+                          "args": [
+                            {
+                              "ref": [
+                                "Source Columns 1",
+                                "ServicesRenderedDate"
+                              ]
+                            },
+                            {
+                              "val": "YYYYMMDD"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    ">",
+                    {
+                      "val": 10
+                    },
+                    "then",
+                    {
+                      "val": 1
+                    },
+                    "else",
+                    {
+                      "val": 0
+                    },
+                    "end"
+                  ]
+                },
+                {
+                  "as": "POCount",
+                  "xpr": [
+                    {
+                      "val": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            "as": "Calculated Columns 1"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "BillingDocument"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "BillingDocumentItem"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "ServicesRenderedDate"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "Material"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "Plant"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "SalesDocument"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "BillingDocumentDate"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "SalesOrganization"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "CreatedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "ProcessingTimeDays"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "IsCompletedPO"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "IsDelayedPO"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "POCount"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_FACT"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}

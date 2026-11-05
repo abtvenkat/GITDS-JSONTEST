@@ -1,0 +1,92 @@
+{
+  "definitions": {
+    "WRAP_SRC_Z_TESTVIEW02": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source SRC_Z_TESTVIEW02.",
+      "elements": {
+        "BillingDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "BillingDocument",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "BillingDocumentDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "BillingDocumentDate",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "@EndUserText.label": "CompanyCode",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrganization": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrganization",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CreatedByUser": {
+          "type": "cds.String",
+          "@EndUserText.label": "CreatedByUser",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "SRC_Z_TESTVIEW02"
+            ],
+            "as": "SRC_Z_TESTVIEW02"
+          },
+          "columns": [
+            {
+              "ref": [
+                "SRC_Z_TESTVIEW02",
+                "BillingDocument"
+              ]
+            },
+            {
+              "ref": [
+                "SRC_Z_TESTVIEW02",
+                "BillingDocumentDate"
+              ]
+            },
+            {
+              "ref": [
+                "SRC_Z_TESTVIEW02",
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "SRC_Z_TESTVIEW02",
+                "SalesOrganization"
+              ]
+            },
+            {
+              "ref": [
+                "SRC_Z_TESTVIEW02",
+                "CreatedByUser"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"BillingDocument\", \"BillingDocumentDate\", \"CompanyCode\", \"SalesOrganization\", \"CreatedByUser\"\r\nFROM \"SRC_Z_TESTVIEW02\""
+    }
+  }
+}
