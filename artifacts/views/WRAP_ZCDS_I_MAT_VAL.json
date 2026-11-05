@@ -1,0 +1,63 @@
+{
+  "definitions": {
+    "WRAP_ZCDS_I_MAT_VAL": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source ZCDS_I_MAT_VAL.",
+      "elements": {
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material number",
+          "length": 40,
+          "key": true
+        },
+        "StandardPrice": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Standard price",
+          "precision": 31,
+          "scale": 6,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ZCDS_I_MAT_VAL"
+            ],
+            "as": "ZCDS_I_MAT_VAL"
+          },
+          "columns": [
+            {
+              "ref": [
+                "ZCDS_I_MAT_VAL",
+                "Material"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "ZCDS_I_MAT_VAL",
+                "StandardPrice"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"Material\", \"StandardPrice\"\r\nFROM \"ZCDS_I_MAT_VAL\""
+    }
+  }
+}
