@@ -28,6 +28,58 @@ def load_json(file_path):
         return json.load(f)
 
 
+def referenced_object_names(value):
+    """Returns technical names found in CSN reference arrays."""
+    references = set()
+    if isinstance(value, dict):
+        ref = value.get("ref")
+        if isinstance(ref, list) and ref and all(isinstance(part, str) for part in ref):
+            references.add(ref[0].split(".")[-1])
+        for child in value.values():
+            references.update(referenced_object_names(child))
+    elif isinstance(value, list):
+        for child in value:
+            references.update(referenced_object_names(child))
+    return references
+
+
+def order_artifacts(artifacts, mapping):
+    """Orders artifacts after their referenced artifacts, with configured priority as fallback."""
+    by_name = {item["technical_name"]: item for item in artifacts}
+    dependencies = {item["technical_name"]: set() for item in artifacts}
+
+    for artifact in artifacts:
+        data = load_json(artifact["file_path"])
+        references = referenced_object_names(data)
+        dependencies[artifact["technical_name"]] = {
+            name for name in references
+            if name in by_name and name != artifact["technical_name"]
+        }
+
+    ordered = []
+    remaining = set(by_name)
+    while remaining:
+        ready = [
+            name for name in remaining
+            if not (dependencies[name] & remaining)
+        ]
+        if not ready:
+            cycle = ", ".join(sorted(remaining))
+            raise ValueError(f"Circular artifact dependency detected: {cycle}")
+
+        ready.sort(
+            key=lambda name: (
+                mapping.get(by_name[name].get("artifact_type", ""), {})
+                .get("deployment_priority", 99),
+                name,
+            )
+        )
+        ordered.extend(by_name[name] for name in ready)
+        remaining.difference_update(ready)
+
+    return ordered
+
+
 def run_cli_command(command_parts, dry_run=False, mask_secrets=True):
     """Executes a command using subprocess, returns (exit_code, stdout, stderr)."""
     display_cmd = " ".join(command_parts)
@@ -190,12 +242,11 @@ def main():
         print("[INFO] No artifacts to deploy in changed list. Finished successfully.")
         sys.exit(0)
 
-    # Sort artifacts according to priority (tables -> views -> models)
-    def get_priority(item):
-        t = item.get("artifact_type", "")
-        return mapping.get(t, {}).get("deployment_priority", 99)
-
-    artifacts.sort(key=get_priority)
+    try:
+        artifacts = order_artifacts(artifacts, mapping)
+    except (OSError, json.JSONDecodeError, KeyError, ValueError) as err:
+        print(f"[ERROR] Could not determine artifact deployment order: {err}", file=sys.stderr)
+        sys.exit(1)
 
     print(f"[INFO] Deployment starting for {len(artifacts)} artifact(s) into space '{space_id}'...")
     if args.dry_run:

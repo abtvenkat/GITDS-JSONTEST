@@ -98,7 +98,7 @@ Configure the following secrets under **Repository Settings** ➔ **Secrets and 
 | **4. Existing Object Verification** | `deploy.py` performs a pre-flight probe using `datasphere objects <type> read --space <space> --technical-name <name>`. If exit code is 0, the object exists. |
 | **5. Create vs Update** | The deployment probe uses the technical name to detect existing objects. Create and update commands pass the JSON file with `--file-path`; the technical name is read from the JSON definition, matching the supported CLI usage. |
 | **6. Automatic Deployment** | In `@sap/datasphere-cli`, `create` and `update` deploy the object automatically into the runtime database unless `--no-deploy` is specified. |
-| **7. Dependency Ordering** | Artifacts are prioritized by `config/deployment.json`: tables (priority 1-2) ➔ views (priority 3) ➔ analytic models (priority 4). |
+| **7. Dependency Ordering** | Artifacts are topologically ordered from CSN `ref` dependencies, with `config/deployment.json` priorities used when multiple artifacts are ready. Therefore all referenced WRAP views deploy before a dependent FACT view. |
 | **8. Error Capturing** | CLI stdout/stderr are captured line-by-line; on any non-zero exit code, deployment immediately halts to prevent dependent failures. |
 | **9. Duplicate Prevention** | Handled by reading object status before deciding whether to call `create` or `update`. |
 | **10. Renamed / Deleted Files** | Handled in `detect_changes.py`: git renames detect the new path; deletions are safely logged and excluded from automatic deletion per POC scope. |
