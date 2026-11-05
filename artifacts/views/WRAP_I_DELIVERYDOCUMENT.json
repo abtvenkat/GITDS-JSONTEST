@@ -1,0 +1,66 @@
+{
+  "definitions": {
+    "WRAP_I_DELIVERYDOCUMENT": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source I_DELIVERYDOCUMENT.",
+      "elements": {
+        "DeliveryDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "Delivery",
+          "length": 10,
+          "key": true
+        },
+        "DeliveryDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "Delivery date",
+          "length": 8
+        },
+        "ActualGoodsMovementDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "Actual goods movement date",
+          "length": 8
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "RAD_S3P.I_DELIVERYDOCUMENT"
+            ],
+            "as": "I_DELIVERYDOCUMENT"
+          },
+          "columns": [
+            {
+              "ref": [
+                "I_DELIVERYDOCUMENT",
+                "DeliveryDocument"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "I_DELIVERYDOCUMENT",
+                "DeliveryDate"
+              ]
+            },
+            {
+              "ref": [
+                "I_DELIVERYDOCUMENT",
+                "ActualGoodsMovementDate"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
