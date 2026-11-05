@@ -1,0 +1,88 @@
+{
+  "definitions": {
+    "WRAP_Z_TESTVIEW02": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source Z_TESTVIEW02.",
+      "elements": {
+        "BillingDocument": {
+          "type": "cds.String",
+          "@EndUserText.label": "Billing document",
+          "length": 10,
+          "key": true
+        },
+        "CreationDate": {
+          "type": "cds.String",
+          "@EndUserText.label": "Record creation date",
+          "length": 8
+        },
+        "SalesOrganization": {
+          "type": "cds.String",
+          "@EndUserText.label": "Sales organization",
+          "length": 4
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "@EndUserText.label": "Company code",
+          "length": 4
+        },
+        "OverallSDProcessStatus": {
+          "type": "cds.String",
+          "@EndUserText.label": "Overall processing status (header/all items)",
+          "length": 1
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "RAD_S3X.Z_TESTVIEW02"
+            ],
+            "as": "Z_TESTVIEW02"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Z_TESTVIEW02",
+                "BillingDocument"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW02",
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW02",
+                "SalesOrganization"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW02",
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "Z_TESTVIEW02",
+                "OverallSDProcessStatus"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
