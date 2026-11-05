@@ -47,7 +47,7 @@ def extract_artifact_info(path_str, status_char):
     """Parses artifact metadata from path."""
     p = Path(path_str)
     artifact_type = p.parts[1]
-    technical_name = p.stem  # Filename without .json extension
+    technical_name = extract_technical_name(p)
 
     status_map = {
         "A": "added",
@@ -65,6 +65,19 @@ def extract_artifact_info(path_str, status_char):
     }
 
 
+def extract_technical_name(file_path):
+    """Reads the technical name from the first JSON definition."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        definitions = data.get("definitions")
+        if isinstance(definitions, dict) and definitions:
+            return next(iter(definitions)).split(".")[-1]
+    except (OSError, json.JSONDecodeError):
+        pass
+    return Path(file_path).stem
+
+
 def detect_all_artifacts():
     """Scans all JSON files currently present in artifacts/ (including subfolders)."""
     artifacts = []
@@ -79,7 +92,7 @@ def detect_all_artifacts():
                 artifacts.append({
                     "file_path": file_path.as_posix(),
                     "artifact_type": norm_parts[1],
-                    "technical_name": file_path.stem,
+                    "technical_name": extract_technical_name(file_path),
                     "change_type": "existing"
                 })
     return artifacts
@@ -169,4 +182,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -53,14 +53,7 @@ def validate_artifact(artifact_entry, supported_types):
             f"Allowed types: {list(supported_types.keys())}"
         )
 
-    # 3. Technical name convention check
-    if not TECHNICAL_NAME_REGEX.match(technical_name):
-        errors.append(
-            f"Invalid technical name '{technical_name}'. "
-            "Must be 1-128 alphanumeric characters or underscores, no spaces."
-        )
-
-    # 4. JSON Syntax Validation
+    # 3. JSON Syntax Validation
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -75,32 +68,31 @@ def validate_artifact(artifact_entry, supported_types):
         errors.append("Root JSON element must be an object (dictionary).")
         return False, errors
 
-    # 5. Schema check (CSN format or Datasphere definition)
+    # 4. Schema check (CSN format or Datasphere definition)
     definitions = data.get("definitions")
     if definitions is not None:
         if not isinstance(definitions, dict) or len(definitions) == 0:
             errors.append("'definitions' property must be a non-empty JSON object.")
         else:
-            # Check if matching technical name or entity definition exists
-            matching_key = None
-            for key, defn in definitions.items():
-                short_name = key.split(".")[-1]
-                if short_name.upper() == technical_name.upper():
-                    matching_key = key
-                    break
-            
-            if matching_key:
-                entity = definitions[matching_key]
-                if not isinstance(entity, dict):
-                    errors.append(f"Definition '{matching_key}' must be an object.")
-                elif "kind" not in entity:
-                    errors.append(f"Definition '{matching_key}' is missing required 'kind' property.")
-            else:
-                # Warning if technical name does not match any entry in definitions
-                print(
-                    f"  [NOTE] File technical name '{technical_name}' differs from definitions keys: "
-                    f"{list(definitions.keys())}. Proceeding with file-based technical name."
+            definition_name = next(iter(definitions)).split(".")[-1]
+            technical_name = definition_name
+            artifact_entry["technical_name"] = technical_name
+
+            if not TECHNICAL_NAME_REGEX.match(technical_name):
+                errors.append(
+                    f"Invalid technical name '{technical_name}'. "
+                    "Must be 1-128 alphanumeric characters or underscores, no spaces."
                 )
+
+            entity = definitions[next(iter(definitions))]
+            if not isinstance(entity, dict):
+                errors.append(f"Definition '{next(iter(definitions))}' must be an object.")
+            elif "kind" not in entity:
+                errors.append(
+                    f"Definition '{next(iter(definitions))}' is missing required 'kind' property."
+                )
+    else:
+        errors.append("'definitions' property is required to derive the technical name.")
 
     return len(errors) == 0, errors
 
@@ -157,4 +149,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
