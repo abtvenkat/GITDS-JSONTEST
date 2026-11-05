@@ -118,9 +118,10 @@ def deploy_artifact(cli_base, artifact, space_id, auto_deploy=True, dry_run=Fals
         artifact_type,
         action,
         "--space", space_id,
-        "--technical-name", technical_name,
         "--file-path", f'"{file_path}"'
     ]
+
+    cmd.append("--verbose")
 
     if not auto_deploy:
         cmd.append("--no-deploy")
@@ -236,4 +237,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

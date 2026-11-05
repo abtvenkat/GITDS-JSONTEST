@@ -96,7 +96,7 @@ Configure the following secrets under **Repository Settings** ➔ **Secrets and 
 | **2. Client Credentials Grant Type** | Fully supported in `@sap/datasphere-cli`. Verified directly in `@sap/cli-core` (`getToken.js`). Does not require browser interaction or passcode retrieval. |
 | **3. Space Selection** | The `--space <space_id>` flag is passed to all object-level commands (`read`, `create`, `update`). |
 | **4. Existing Object Verification** | `deploy.py` performs a pre-flight probe using `datasphere objects <type> read --space <space> --technical-name <name>`. If exit code is 0, the object exists. |
-| **5. Create vs Update** | New artifacts trigger `create --space <space> --technical-name <name> --file-path <path>`. Existing artifacts trigger `update --space <space> --technical-name <name> --file-path <path>`. |
+| **5. Create vs Update** | The deployment probe uses the technical name to detect existing objects. Create and update commands pass the JSON file with `--file-path`; the technical name is read from the JSON definition, matching the supported CLI usage. |
 | **6. Automatic Deployment** | In `@sap/datasphere-cli`, `create` and `update` deploy the object automatically into the runtime database unless `--no-deploy` is specified. |
 | **7. Dependency Ordering** | Artifacts are prioritized by `config/deployment.json`: tables (priority 1-2) ➔ views (priority 3) ➔ analytic models (priority 4). |
 | **8. Error Capturing** | CLI stdout/stderr are captured line-by-line; on any non-zero exit code, deployment immediately halts to prevent dependent failures. |
@@ -119,4 +119,3 @@ python scripts/validate_json.py --input changed_artifacts.json --config config/d
 # 3. Simulate deployment in Dry-Run mode
 python scripts/deploy.py --input changed_artifacts.json --space DEV --dry-run
 ```
-
