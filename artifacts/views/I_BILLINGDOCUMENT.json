@@ -1,0 +1,1325 @@
+{
+  "definitions": {
+    "I_BILLINGDOCUMENT": {
+      "kind": "entity",
+      "@EndUserText.label": "Billing document",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "I_BILLINGDOCUMENT_Delta"
+        ]
+      },
+      "@DataWarehouse.persistence.hdlf.tableFormat": {
+        "#": "DELTA_LAKE"
+      },
+      "elements": {
+        "BillingDocument": {
+          "@EndUserText.label": "Billing document",
+          "type": "cds.String",
+          "key": true,
+          "notNull": true,
+          "length": 10
+        },
+        "SDDocumentCategory": {
+          "@EndUserText.label": "Sd document category",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "BillingDocumentCategory": {
+          "@EndUserText.label": "Billing category",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingDocumentType": {
+          "@EndUserText.label": "Billing type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "CreatedByUser": {
+          "@EndUserText.label": "Name of person responsible for creating the object",
+          "type": "cds.String",
+          "key": false,
+          "length": 12
+        },
+        "CreationDate": {
+          "@EndUserText.label": "Record created on",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "CreationTime": {
+          "@EndUserText.label": "Entry time",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "LastChangeDate": {
+          "@EndUserText.label": "Last changed on",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "LastChangeDateTime": {
+          "@EndUserText.label": "Utc time stamp in long form (yyyymmddhhmmssmmmuuun)",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 21,
+          "scale": 7
+        },
+        "LogicalSystem": {
+          "@EndUserText.label": "Logical system",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "SalesOrganization": {
+          "@EndUserText.label": "Sales organization",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "DistributionChannel": {
+          "@EndUserText.label": "Distribution channel",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "Division": {
+          "@EndUserText.label": "Division",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "BillingDocumentDate": {
+          "@EndUserText.label": "Billing date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "BillingDocumentIsCancelled": {
+          "@EndUserText.label": "Billing document is canceled",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CancelledBillingDocument": {
+          "@EndUserText.label": "Number of canceled billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "BillingDocCombinationCriteria": {
+          "@EndUserText.label": "Combination criteria in the billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 40
+        },
+        "ManualInvoiceMaintIsRelevant": {
+          "@EndUserText.label": "Manual invoice maintenance",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "NmbrOfPages": {
+          "@EndUserText.label": "Number of pages of invoice",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "IsIntrastatReportingRelevant": {
+          "@EndUserText.label": "Relevant for intrastat reporting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "IsIntrastatReportingExcluded": {
+          "@EndUserText.label": "Exclude from intrastat reporting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingDocumentIsTemporary": {
+          "@EndUserText.label": "Isdraft indicator",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "TotalNetAmount": {
+          "@EndUserText.label": "Net value in document currency",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 38,
+          "scale": 6
+        },
+        "TransactionCurrency": {
+          "@EndUserText.label": "Sd document currency",
+          "type": "cds.String",
+          "key": false,
+          "length": 5
+        },
+        "StatisticsCurrency": {
+          "@EndUserText.label": "Statistics currency",
+          "type": "cds.String",
+          "key": false,
+          "length": 5
+        },
+        "TotalTaxAmount": {
+          "@EndUserText.label": "Tax amount in document currency",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 38,
+          "scale": 6
+        },
+        "CustomerPriceGroup": {
+          "@EndUserText.label": "Customer price group",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "PriceListType": {
+          "@EndUserText.label": "Price list type",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "TaxDepartureCountry": {
+          "@EndUserText.label": "Tax departure country/region",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "VATRegistration": {
+          "@EndUserText.label": "Vat registration number",
+          "type": "cds.String",
+          "key": false,
+          "length": 20
+        },
+        "VATRegistrationOrigin": {
+          "@EndUserText.label": "Origin of sales tax number",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "VATRegistrationCountry": {
+          "@EndUserText.label": "Country/region of sales tax id number",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "HierarchyTypePricing": {
+          "@EndUserText.label": "Hierarchy type for pricing",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification1": {
+          "@EndUserText.label": "Tax classification 1 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification2": {
+          "@EndUserText.label": "Tax classification 2 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification3": {
+          "@EndUserText.label": "Tax classification 3 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification4": {
+          "@EndUserText.label": "Tax classification 4 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification5": {
+          "@EndUserText.label": "Tax classification 5 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification6": {
+          "@EndUserText.label": "Tax classification 6 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification7": {
+          "@EndUserText.label": "Tax classification 7 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification8": {
+          "@EndUserText.label": "Tax classification 8 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification9": {
+          "@EndUserText.label": "Tax classification 9 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "IsEUTriangularDeal": {
+          "@EndUserText.label": "Indicator: triangular deal within the eu",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "SDPricingProcedure": {
+          "@EndUserText.label": "Pricing procedure in pricing",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "ShippingCondition": {
+          "@EndUserText.label": "Shipping conditions",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "PlantSupplier": {
+          "@EndUserText.label": "Supplier number of plant",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "IncotermsVersion": {
+          "@EndUserText.label": "Incoterms version",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "IncotermsClassification": {
+          "@EndUserText.label": "Incoterms (part 1)",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "IncotermsTransferLocation": {
+          "@EndUserText.label": "Incoterms (part 2)",
+          "type": "cds.String",
+          "key": false,
+          "length": 28
+        },
+        "IncotermsLocation1": {
+          "@EndUserText.label": "Incoterms location 1",
+          "type": "cds.String",
+          "key": false,
+          "length": 70
+        },
+        "IncotermsLocation2": {
+          "@EndUserText.label": "Incoterms location 2",
+          "type": "cds.String",
+          "key": false,
+          "length": 70
+        },
+        "PayerParty": {
+          "@EndUserText.label": "Payer",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "ContractAccount": {
+          "@EndUserText.label": "Contract account number",
+          "type": "cds.String",
+          "key": false,
+          "length": 12
+        },
+        "CustomerPaymentTerms": {
+          "@EndUserText.label": "Terms of payment key",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "PaymentMethod": {
+          "@EndUserText.label": "Payment method",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "PaymentReference": {
+          "@EndUserText.label": "Payment reference",
+          "type": "cds.String",
+          "key": false,
+          "length": 30
+        },
+        "FixedValueDate": {
+          "@EndUserText.label": "Fixed value date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "AdditionalValueDays": {
+          "@EndUserText.label": "Additional value days",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "SEPAMandate": {
+          "@EndUserText.label": "Unique reference to mandate for each payee",
+          "type": "cds.String",
+          "key": false,
+          "length": 35
+        },
+        "CompanyCode": {
+          "@EndUserText.label": "Company code",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "FiscalYear": {
+          "@EndUserText.label": "Fiscal year",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "AccountingDocument": {
+          "@EndUserText.label": "Document number of an accounting document",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "FiscalPeriod": {
+          "@EndUserText.label": "Posting period",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CustomerAccountAssignmentGroup": {
+          "@EndUserText.label": "Account assignment group for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "AccountingExchangeRateIsSet": {
+          "@EndUserText.label": "Exchange rate setting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingExchangeRate": {
+          "@EndUserText.label": "Exchange rate for fi postings",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchangeRateDate": {
+          "@EndUserText.label": "Translation date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "ExchangeRateType": {
+          "@EndUserText.label": "Exchange rate type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "DocumentReferenceID": {
+          "@EndUserText.label": "Reference document number",
+          "type": "cds.String",
+          "key": false,
+          "length": 16
+        },
+        "AssignmentReference": {
+          "@EndUserText.label": "Assignment number",
+          "type": "cds.String",
+          "key": false,
+          "length": 18
+        },
+        "ReversalReason": {
+          "@EndUserText.label": "Reason for reversal or inverse posting",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "DunningArea": {
+          "@EndUserText.label": "Dunning area",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "DunningBlockingReason": {
+          "@EndUserText.label": "Dunning block",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "DunningKey": {
+          "@EndUserText.label": "Dunning key",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InternalFinancialDocument": {
+          "@EndUserText.label": "Financial doc. processing: internal financial doc. number",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "IsRelevantForAccrual": {
+          "@EndUserText.label": "Is relevant for accrual",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "SoldToParty": {
+          "@EndUserText.label": "Sold-to party",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "PartnerCompany": {
+          "@EndUserText.label": "Company id of trading partner",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "PurchaseOrderByCustomer": {
+          "@EndUserText.label": "Customer reference",
+          "type": "cds.String",
+          "key": false,
+          "length": 35
+        },
+        "CustomerGroup": {
+          "@EndUserText.label": "Customer group",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "Country": {
+          "@EndUserText.label": "Destination country/region",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CityCode": {
+          "@EndUserText.label": "City code",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "SalesDistrict": {
+          "@EndUserText.label": "Sales district",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "Region": {
+          "@EndUserText.label": "Region (state, province, county)",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "County": {
+          "@EndUserText.label": "County code",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CreditControlArea": {
+          "@EndUserText.label": "Credit control area",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "CustomerRebateAgreement": {
+          "@EndUserText.label": "Agreement (various conditions grouped together)",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "PricingDocument": {
+          "@EndUserText.label": "Number of the document condition",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "OverallSDProcessStatus": {
+          "@EndUserText.label": "Overall processing status (header/all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OverallBillingStatus": {
+          "@EndUserText.label": "Sd billing status",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingPostingStatus": {
+          "@EndUserText.label": "Posting status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingTransferStatus": {
+          "@EndUserText.label": "Status for transfer to accounting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingIssueType": {
+          "@EndUserText.label": "Billing issue type",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceListStatus": {
+          "@EndUserText.label": "Invoice list status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OvrlItmGeneralIncompletionSts": {
+          "@EndUserText.label": "Incompletion status (all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OverallPricingIncompletionSts": {
+          "@EndUserText.label": "Pricing incompletion status (all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceClearingStatus": {
+          "@EndUserText.label": "Clearing status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceListType": {
+          "@EndUserText.label": "Invoice list type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "InvoiceListBillingDate": {
+          "@EndUserText.label": "Billing date for the invoice list",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        }
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "I_BILLINGDOCUMENT_Delta": {
+      "kind": "entity",
+      "@EndUserText.label": "Billing document",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "I_BILLINGDOCUMENT",
+      "params": {
+        "EXTRACTION_MODE": {
+          "@EndUserText.label": "Extraction Mode",
+          "type": "cds.String",
+          "length": 10,
+          "default": "FULL",
+          "@DataWarehouse.bw.extractionMode": true
+        },
+        "FROM_VERSION": {
+          "@EndUserText.label": "From Change Version",
+          "type": "cds.Integer64",
+          "default": "-1"
+        },
+        "TILL_VERSION": {
+          "@EndUserText.label": "Till Change Version",
+          "type": "cds.Integer64",
+          "default": "-1"
+        }
+      },
+      "@Semantics.interval": [
+        {
+          "qualifier": "changeVersion",
+          "lowerBoundaryParameter": {
+            "=": "FROM_VERSION"
+          },
+          "lowerBoundaryIncluded": true,
+          "upperBoundaryParameter": {
+            "=": "TILL_VERSION"
+          },
+          "upperBoundaryIncluded": true
+        }
+      ],
+      "@DataWarehouse.persistence.hdlf.tableFormat": {
+        "#": "DELTA_LAKE"
+      },
+      "@cds.persistence.udf": true,
+      "elements": {
+        "BillingDocument": {
+          "@EndUserText.label": "Billing document",
+          "type": "cds.String",
+          "key": true,
+          "notNull": true,
+          "length": 10
+        },
+        "SDDocumentCategory": {
+          "@EndUserText.label": "Sd document category",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "BillingDocumentCategory": {
+          "@EndUserText.label": "Billing category",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingDocumentType": {
+          "@EndUserText.label": "Billing type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "CreatedByUser": {
+          "@EndUserText.label": "Name of person responsible for creating the object",
+          "type": "cds.String",
+          "key": false,
+          "length": 12
+        },
+        "CreationDate": {
+          "@EndUserText.label": "Record created on",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "CreationTime": {
+          "@EndUserText.label": "Entry time",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "LastChangeDate": {
+          "@EndUserText.label": "Last changed on",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "LastChangeDateTime": {
+          "@EndUserText.label": "Utc time stamp in long form (yyyymmddhhmmssmmmuuun)",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 21,
+          "scale": 7
+        },
+        "LogicalSystem": {
+          "@EndUserText.label": "Logical system",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "SalesOrganization": {
+          "@EndUserText.label": "Sales organization",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "DistributionChannel": {
+          "@EndUserText.label": "Distribution channel",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "Division": {
+          "@EndUserText.label": "Division",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "BillingDocumentDate": {
+          "@EndUserText.label": "Billing date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "BillingDocumentIsCancelled": {
+          "@EndUserText.label": "Billing document is canceled",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CancelledBillingDocument": {
+          "@EndUserText.label": "Number of canceled billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "BillingDocCombinationCriteria": {
+          "@EndUserText.label": "Combination criteria in the billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 40
+        },
+        "ManualInvoiceMaintIsRelevant": {
+          "@EndUserText.label": "Manual invoice maintenance",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "NmbrOfPages": {
+          "@EndUserText.label": "Number of pages of invoice",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "IsIntrastatReportingRelevant": {
+          "@EndUserText.label": "Relevant for intrastat reporting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "IsIntrastatReportingExcluded": {
+          "@EndUserText.label": "Exclude from intrastat reporting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingDocumentIsTemporary": {
+          "@EndUserText.label": "Isdraft indicator",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "TotalNetAmount": {
+          "@EndUserText.label": "Net value in document currency",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 38,
+          "scale": 6
+        },
+        "TransactionCurrency": {
+          "@EndUserText.label": "Sd document currency",
+          "type": "cds.String",
+          "key": false,
+          "length": 5
+        },
+        "StatisticsCurrency": {
+          "@EndUserText.label": "Statistics currency",
+          "type": "cds.String",
+          "key": false,
+          "length": 5
+        },
+        "TotalTaxAmount": {
+          "@EndUserText.label": "Tax amount in document currency",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 38,
+          "scale": 6
+        },
+        "CustomerPriceGroup": {
+          "@EndUserText.label": "Customer price group",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "PriceListType": {
+          "@EndUserText.label": "Price list type",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "TaxDepartureCountry": {
+          "@EndUserText.label": "Tax departure country/region",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "VATRegistration": {
+          "@EndUserText.label": "Vat registration number",
+          "type": "cds.String",
+          "key": false,
+          "length": 20
+        },
+        "VATRegistrationOrigin": {
+          "@EndUserText.label": "Origin of sales tax number",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "VATRegistrationCountry": {
+          "@EndUserText.label": "Country/region of sales tax id number",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "HierarchyTypePricing": {
+          "@EndUserText.label": "Hierarchy type for pricing",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification1": {
+          "@EndUserText.label": "Tax classification 1 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification2": {
+          "@EndUserText.label": "Tax classification 2 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification3": {
+          "@EndUserText.label": "Tax classification 3 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification4": {
+          "@EndUserText.label": "Tax classification 4 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification5": {
+          "@EndUserText.label": "Tax classification 5 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification6": {
+          "@EndUserText.label": "Tax classification 6 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification7": {
+          "@EndUserText.label": "Tax classification 7 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification8": {
+          "@EndUserText.label": "Tax classification 8 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "CustomerTaxClassification9": {
+          "@EndUserText.label": "Tax classification 9 for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "IsEUTriangularDeal": {
+          "@EndUserText.label": "Indicator: triangular deal within the eu",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "SDPricingProcedure": {
+          "@EndUserText.label": "Pricing procedure in pricing",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "ShippingCondition": {
+          "@EndUserText.label": "Shipping conditions",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "PlantSupplier": {
+          "@EndUserText.label": "Supplier number of plant",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "IncotermsVersion": {
+          "@EndUserText.label": "Incoterms version",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "IncotermsClassification": {
+          "@EndUserText.label": "Incoterms (part 1)",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "IncotermsTransferLocation": {
+          "@EndUserText.label": "Incoterms (part 2)",
+          "type": "cds.String",
+          "key": false,
+          "length": 28
+        },
+        "IncotermsLocation1": {
+          "@EndUserText.label": "Incoterms location 1",
+          "type": "cds.String",
+          "key": false,
+          "length": 70
+        },
+        "IncotermsLocation2": {
+          "@EndUserText.label": "Incoterms location 2",
+          "type": "cds.String",
+          "key": false,
+          "length": 70
+        },
+        "PayerParty": {
+          "@EndUserText.label": "Payer",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "ContractAccount": {
+          "@EndUserText.label": "Contract account number",
+          "type": "cds.String",
+          "key": false,
+          "length": 12
+        },
+        "CustomerPaymentTerms": {
+          "@EndUserText.label": "Terms of payment key",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "PaymentMethod": {
+          "@EndUserText.label": "Payment method",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "PaymentReference": {
+          "@EndUserText.label": "Payment reference",
+          "type": "cds.String",
+          "key": false,
+          "length": 30
+        },
+        "FixedValueDate": {
+          "@EndUserText.label": "Fixed value date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "AdditionalValueDays": {
+          "@EndUserText.label": "Additional value days",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "SEPAMandate": {
+          "@EndUserText.label": "Unique reference to mandate for each payee",
+          "type": "cds.String",
+          "key": false,
+          "length": 35
+        },
+        "CompanyCode": {
+          "@EndUserText.label": "Company code",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "FiscalYear": {
+          "@EndUserText.label": "Fiscal year",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "AccountingDocument": {
+          "@EndUserText.label": "Document number of an accounting document",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "FiscalPeriod": {
+          "@EndUserText.label": "Posting period",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CustomerAccountAssignmentGroup": {
+          "@EndUserText.label": "Account assignment group for customer",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "AccountingExchangeRateIsSet": {
+          "@EndUserText.label": "Exchange rate setting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingExchangeRate": {
+          "@EndUserText.label": "Exchange rate for fi postings",
+          "type": "cds.Decimal",
+          "key": false,
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchangeRateDate": {
+          "@EndUserText.label": "Translation date",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "ExchangeRateType": {
+          "@EndUserText.label": "Exchange rate type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "DocumentReferenceID": {
+          "@EndUserText.label": "Reference document number",
+          "type": "cds.String",
+          "key": false,
+          "length": 16
+        },
+        "AssignmentReference": {
+          "@EndUserText.label": "Assignment number",
+          "type": "cds.String",
+          "key": false,
+          "length": 18
+        },
+        "ReversalReason": {
+          "@EndUserText.label": "Reason for reversal or inverse posting",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "DunningArea": {
+          "@EndUserText.label": "Dunning area",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "DunningBlockingReason": {
+          "@EndUserText.label": "Dunning block",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "DunningKey": {
+          "@EndUserText.label": "Dunning key",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InternalFinancialDocument": {
+          "@EndUserText.label": "Financial doc. processing: internal financial doc. number",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "IsRelevantForAccrual": {
+          "@EndUserText.label": "Is relevant for accrual",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "SoldToParty": {
+          "@EndUserText.label": "Sold-to party",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "PartnerCompany": {
+          "@EndUserText.label": "Company id of trading partner",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "PurchaseOrderByCustomer": {
+          "@EndUserText.label": "Customer reference",
+          "type": "cds.String",
+          "key": false,
+          "length": 35
+        },
+        "CustomerGroup": {
+          "@EndUserText.label": "Customer group",
+          "type": "cds.String",
+          "key": false,
+          "length": 2
+        },
+        "Country": {
+          "@EndUserText.label": "Destination country/region",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CityCode": {
+          "@EndUserText.label": "City code",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "SalesDistrict": {
+          "@EndUserText.label": "Sales district",
+          "type": "cds.String",
+          "key": false,
+          "length": 6
+        },
+        "Region": {
+          "@EndUserText.label": "Region (state, province, county)",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "County": {
+          "@EndUserText.label": "County code",
+          "type": "cds.String",
+          "key": false,
+          "length": 3
+        },
+        "CreditControlArea": {
+          "@EndUserText.label": "Credit control area",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "CustomerRebateAgreement": {
+          "@EndUserText.label": "Agreement (various conditions grouped together)",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "PricingDocument": {
+          "@EndUserText.label": "Number of the document condition",
+          "type": "cds.String",
+          "key": false,
+          "length": 10
+        },
+        "OverallSDProcessStatus": {
+          "@EndUserText.label": "Overall processing status (header/all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OverallBillingStatus": {
+          "@EndUserText.label": "Sd billing status",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingPostingStatus": {
+          "@EndUserText.label": "Posting status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "AccountingTransferStatus": {
+          "@EndUserText.label": "Status for transfer to accounting",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "BillingIssueType": {
+          "@EndUserText.label": "Billing issue type",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceListStatus": {
+          "@EndUserText.label": "Invoice list status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OvrlItmGeneralIncompletionSts": {
+          "@EndUserText.label": "Incompletion status (all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "OverallPricingIncompletionSts": {
+          "@EndUserText.label": "Pricing incompletion status (all items)",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceClearingStatus": {
+          "@EndUserText.label": "Clearing status of billing document",
+          "type": "cds.String",
+          "key": false,
+          "length": 1
+        },
+        "InvoiceListType": {
+          "@EndUserText.label": "Invoice list type",
+          "type": "cds.String",
+          "key": false,
+          "length": 4
+        },
+        "InvoiceListBillingDate": {
+          "@EndUserText.label": "Billing date for the invoice list",
+          "type": "cds.String",
+          "key": false,
+          "length": 8
+        },
+        "Change_Type": {
+          "@EndUserText.label": "Change_Type",
+          "type": "cds.String",
+          "key": false,
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "@EndUserText.label": "Change_Date",
+          "type": "cds.Timestamp",
+          "key": false,
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "version": {
+    "csn": "1.0"
+  },
+  "meta": {
+    "creator": "CDS Compiler v1.19.2"
+  },
+  "$version": "1.0"
+}
