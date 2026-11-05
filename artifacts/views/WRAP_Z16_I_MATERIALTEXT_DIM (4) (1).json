@@ -1,0 +1,68 @@
+{
+  "definitions": {
+    "WRAP_Z16_I_MATERIALTEXT_DIM": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source Z16_I_MATERIALTEXT_DIM.",
+      "elements": {
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material number",
+          "length": 40,
+          "key": true
+        },
+        "Language": {
+          "type": "cds.String",
+          "@EndUserText.label": "Language key",
+          "length": 2,
+          "key": true
+        },
+        "MaterialName": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material description",
+          "length": 40
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "RAD_S3P.Z16_I_MATERIALTEXT_DIM"
+            ],
+            "as": "Z16_I_MATERIALTEXT_DIM"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Z16_I_MATERIALTEXT_DIM",
+                "Material"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Z16_I_MATERIALTEXT_DIM",
+                "Language"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Z16_I_MATERIALTEXT_DIM",
+                "MaterialName"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
