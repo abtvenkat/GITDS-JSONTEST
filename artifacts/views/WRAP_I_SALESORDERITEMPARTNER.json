@@ -1,0 +1,68 @@
+{
+  "definitions": {
+    "WRAP_I_SALESORDERITEMPARTNER": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source I_SALESORDERITEMPARTNER.",
+      "elements": {
+        "SalesOrder": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrder",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrderItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrderItem",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Customer": {
+          "type": "cds.String",
+          "@EndUserText.label": "Customer",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "I_SALESORDERITEMPARTNER"
+            ],
+            "as": "I_SALESORDERITEMPARTNER"
+          },
+          "columns": [
+            {
+              "ref": [
+                "I_SALESORDERITEMPARTNER",
+                "SalesOrder"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEMPARTNER",
+                "SalesOrderItem"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEMPARTNER",
+                "Customer"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"SalesOrder\", \"SalesOrderItem\", \"Customer\"\r\nFROM \"I_SALESORDERITEMPARTNER\""
+    }
+  }
+}
