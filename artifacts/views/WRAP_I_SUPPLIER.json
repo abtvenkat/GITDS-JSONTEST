@@ -1,0 +1,66 @@
+{
+  "definitions": {
+    "WRAP_I_SUPPLIER": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source I_SUPPLIER.",
+      "elements": {
+        "Supplier": {
+          "type": "cds.String",
+          "@EndUserText.label": "Account number of supplier",
+          "length": 10,
+          "key": true
+        },
+        "SupplierName": {
+          "type": "cds.String",
+          "@EndUserText.label": "Name of supplier",
+          "length": 80
+        },
+        "Country": {
+          "type": "cds.String",
+          "@EndUserText.label": "Country/region key",
+          "length": 3
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "RAD_S3P.I_SUPPLIER"
+            ],
+            "as": "I_SUPPLIER"
+          },
+          "columns": [
+            {
+              "ref": [
+                "I_SUPPLIER",
+                "Supplier"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "I_SUPPLIER",
+                "SupplierName"
+              ]
+            },
+            {
+              "ref": [
+                "I_SUPPLIER",
+                "Country"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
