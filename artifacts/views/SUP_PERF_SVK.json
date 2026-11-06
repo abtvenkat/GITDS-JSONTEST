@@ -1,0 +1,617 @@
+{
+  "definitions": {
+    "SUP_PERF_SVK": {
+      "kind": "entity",
+      "@EndUserText.label": "Terminal L2 fact view for supplier performance evaluation integrating purchase orders, confirmations, deliveries, suppliers, and material valuation.",
+      "elements": {
+        "PurchaseOrder": {
+          "type": "cds.String",
+          "@EndUserText.label": "Purchase order number",
+          "length": 10
+        },
+        "PurchaseOrderItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "Item number of purchase order",
+          "length": 5
+        },
+        "Supplier": {
+          "type": "cds.String",
+          "@EndUserText.label": "Account number of supplier",
+          "length": 10,
+          "key": true
+        },
+        "SupplierName": {
+          "type": "cds.String",
+          "@EndUserText.label": "Name of supplier",
+          "length": 80
+        },
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material number",
+          "length": 40,
+          "key": true
+        },
+        "MaterialName": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material description",
+          "length": 40
+        },
+        "OrderQuantity": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Purchase order quantity",
+          "precision": 13,
+          "scale": 3,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "NetPriceAmount": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Net price in purchasing document (in document currency)",
+          "precision": 31,
+          "scale": 6,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "StandardPrice": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Standard price",
+          "precision": 31,
+          "scale": 6,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "ActualDeliveryQuantity": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Actual quantity delivered (in sales units)",
+          "precision": 13,
+          "scale": 3,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "PriceVariance": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Price Variance",
+          "@DataWarehouse.native.dataType": "DECIMAL",
+          "precision": 31,
+          "scale": 6,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "AVG"
+          }
+        },
+        "FulfillmentCompleteness": {
+          "type": "cds.Decimal",
+          "@EndUserText.label": "Order Fulfillment Completeness",
+          "@DataWarehouse.native.dataType": "DECIMAL",
+          "precision": 13,
+          "scale": 3,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "AVG"
+          }
+        },
+        "OnTimeDeliveryFlag": {
+          "type": "cds.Integer",
+          "@EndUserText.label": "On-Time Delivery Flag",
+          "@DataWarehouse.native.dataType": "INTEGER",
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "SELECT": {
+              "from": {
+                "SELECT": {
+                  "from": {
+                    "join": "LEFT",
+                    "args": [
+                      {
+                        "join": "LEFT",
+                        "args": [
+                          {
+                            "join": "LEFT",
+                            "args": [
+                              {
+                                "join": "LEFT",
+                                "args": [
+                                  {
+                                    "join": "LEFT",
+                                    "args": [
+                                      {
+                                        "ref": [
+                                          "WRAP_C_PURCHASEORDERITEMDEX"
+                                        ],
+                                        "as": "WRAP_C_PURCHASEORDERITEMDEX"
+                                      },
+                                      {
+                                        "ref": [
+                                          "WRAP_ZI_EKESS"
+                                        ],
+                                        "as": "WRAP_ZI_EKESS"
+                                      }
+                                    ],
+                                    "on": [
+                                      {
+                                        "ref": [
+                                          "WRAP_C_PURCHASEORDERITEMDEX",
+                                          "PurchaseOrder"
+                                        ]
+                                      },
+                                      "=",
+                                      {
+                                        "ref": [
+                                          "WRAP_ZI_EKESS",
+                                          "Ebeln"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "ref": [
+                                      "WRAP_Z16_I_MATERIALTEXT_DIM"
+                                    ],
+                                    "as": "WRAP_Z16_I_MATERIALTEXT_DIM"
+                                  }
+                                ],
+                                "on": [
+                                  {
+                                    "ref": [
+                                      "WRAP_C_PURCHASEORDERITEMDEX",
+                                      "Material"
+                                    ]
+                                  },
+                                  "=",
+                                  {
+                                    "ref": [
+                                      "WRAP_Z16_I_MATERIALTEXT_DIM",
+                                      "Material"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "ref": [
+                                  "WRAP_I_DELIVERYDOCUMENTITEM"
+                                ],
+                                "as": "WRAP_I_DELIVERYDOCUMENTITEM"
+                              }
+                            ],
+                            "on": [
+                              {
+                                "ref": [
+                                  "WRAP_C_PURCHASEORDERITEMDEX",
+                                  "PurchaseOrder"
+                                ]
+                              },
+                              "=",
+                              {
+                                "ref": [
+                                  "WRAP_I_DELIVERYDOCUMENTITEM",
+                                  "PurchaseOrder"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "ref": [
+                              "WRAP_I_SUPPLIER"
+                            ],
+                            "as": "WRAP_I_SUPPLIER"
+                          }
+                        ],
+                        "on": [
+                          {
+                            "ref": [
+                              "WRAP_C_PURCHASEORDERITEMDEX",
+                              "Supplier"
+                            ]
+                          },
+                          "=",
+                          {
+                            "ref": [
+                              "WRAP_I_SUPPLIER",
+                              "Supplier"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "ref": [
+                          "WRAP_ZCDS_I_MAT_VAL"
+                        ],
+                        "as": "WRAP_ZCDS_I_MAT_VAL"
+                      }
+                    ],
+                    "on": [
+                      {
+                        "ref": [
+                          "WRAP_C_PURCHASEORDERITEMDEX",
+                          "Material"
+                        ]
+                      },
+                      "=",
+                      {
+                        "ref": [
+                          "WRAP_ZCDS_I_MAT_VAL",
+                          "Material"
+                        ]
+                      }
+                    ]
+                  },
+                  "columns": [
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "PurchaseOrder"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "PurchaseOrderItem"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "Supplier"
+                      ],
+                      "key": true
+                    },
+                    {
+                      "ref": [
+                        "WRAP_I_SUPPLIER",
+                        "SupplierName"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "Material"
+                      ],
+                      "key": true
+                    },
+                    {
+                      "ref": [
+                        "WRAP_Z16_I_MATERIALTEXT_DIM",
+                        "MaterialName"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "OrderQuantity"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_C_PURCHASEORDERITEMDEX",
+                        "NetPriceAmount"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_ZCDS_I_MAT_VAL",
+                        "StandardPrice"
+                      ]
+                    },
+                    {
+                      "ref": [
+                        "WRAP_I_DELIVERYDOCUMENTITEM",
+                        "ActualDeliveryQuantity"
+                      ]
+                    }
+                  ]
+                },
+                "as": "Source Columns 1"
+              },
+              "columns": [
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "PurchaseOrder"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "PurchaseOrderItem"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "Supplier"
+                  ],
+                  "key": true
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "SupplierName"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "Material"
+                  ],
+                  "key": true
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "MaterialName"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "OrderQuantity"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "NetPriceAmount"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "StandardPrice"
+                  ]
+                },
+                {
+                  "ref": [
+                    "Source Columns 1",
+                    "ActualDeliveryQuantity"
+                  ]
+                },
+                {
+                  "as": "PriceVariance",
+                  "xpr": [
+                    {
+                      "xpr": [
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "NetPriceAmount"
+                          ]
+                        },
+                        "-",
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "StandardPrice"
+                          ]
+                        }
+                      ],
+                      "cast": {
+                        "type": "cds.Decimal",
+                        "precision": 31,
+                        "scale": 6
+                      }
+                    }
+                  ]
+                },
+                {
+                  "as": "FulfillmentCompleteness",
+                  "xpr": [
+                    {
+                      "xpr": [
+                        "case",
+                        "when",
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "OrderQuantity"
+                          ]
+                        },
+                        ">",
+                        {
+                          "val": 0
+                        },
+                        "then",
+                        {
+                          "ref": [
+                            "Source Columns 1",
+                            "ActualDeliveryQuantity"
+                          ]
+                        },
+                        "/",
+                        {
+                          "func": "NULLIF",
+                          "args": [
+                            {
+                              "ref": [
+                                "Source Columns 1",
+                                "OrderQuantity"
+                              ]
+                            },
+                            {
+                              "val": 0
+                            }
+                          ]
+                        },
+                        "else",
+                        {
+                          "val": 0
+                        },
+                        "end"
+                      ],
+                      "cast": {
+                        "type": "cds.Decimal",
+                        "precision": 13,
+                        "scale": 3
+                      }
+                    }
+                  ]
+                },
+                {
+                  "as": "OnTimeDeliveryFlag",
+                  "xpr": [
+                    "case",
+                    "when",
+                    {
+                      "ref": [
+                        "Source Columns 1",
+                        "ActualDeliveryQuantity"
+                      ]
+                    },
+                    ">=",
+                    {
+                      "ref": [
+                        "Source Columns 1",
+                        "OrderQuantity"
+                      ]
+                    },
+                    "then",
+                    {
+                      "val": 1
+                    },
+                    "else",
+                    {
+                      "val": 0
+                    },
+                    "end"
+                  ]
+                }
+              ]
+            },
+            "as": "Calculated Columns 1"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "PurchaseOrder"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "PurchaseOrderItem"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "Supplier"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "SupplierName"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "Material"
+              ],
+              "key": true
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "MaterialName"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "OrderQuantity"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "NetPriceAmount"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "StandardPrice"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "ActualDeliveryQuantity"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "PriceVariance"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "FulfillmentCompleteness"
+              ]
+            },
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "OnTimeDeliveryFlag"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Calculated Columns 1",
+                "OrderQuantity"
+              ]
+            },
+            ">",
+            {
+              "val": 50
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_FACT"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false
+    }
+  }
+}
