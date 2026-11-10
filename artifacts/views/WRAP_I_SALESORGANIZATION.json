@@ -1,0 +1,68 @@
+{
+  "definitions": {
+    "WRAP_I_SALESORGANIZATION": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source I_SALESORGANIZATION.",
+      "elements": {
+        "SalesOrganization": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrganization",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrganizationCurrency": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrganizationCurrency",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "@EndUserText.label": "CompanyCode",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "I_SALESORGANIZATION"
+            ],
+            "as": "I_SALESORGANIZATION"
+          },
+          "columns": [
+            {
+              "ref": [
+                "I_SALESORGANIZATION",
+                "SalesOrganization"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORGANIZATION",
+                "SalesOrganizationCurrency"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORGANIZATION",
+                "CompanyCode"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"SalesOrganization\", \"SalesOrganizationCurrency\", \"CompanyCode\"\r\nFROM \"I_SALESORGANIZATION\""
+    }
+  }
+}

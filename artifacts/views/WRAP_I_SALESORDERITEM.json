@@ -1,0 +1,98 @@
+{
+  "definitions": {
+    "WRAP_I_SALESORDERITEM": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source I_SALESORDERITEM.",
+      "elements": {
+        "SalesOrder": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrder",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrderItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrderItem",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Material": {
+          "type": "cds.String",
+          "@EndUserText.label": "Material",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "NetAmount": {
+          "type": "cds.String",
+          "@EndUserText.label": "NetAmount",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255,
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          },
+          "@Aggregation.default": {
+            "#": "SUM"
+          }
+        },
+        "TransactionCurrency": {
+          "type": "cds.String",
+          "@EndUserText.label": "TransactionCurrency",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "I_SALESORDERITEM"
+            ],
+            "as": "I_SALESORDERITEM"
+          },
+          "columns": [
+            {
+              "ref": [
+                "I_SALESORDERITEM",
+                "SalesOrder"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEM",
+                "SalesOrderItem"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEM",
+                "Material"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEM",
+                "NetAmount"
+              ]
+            },
+            {
+              "ref": [
+                "I_SALESORDERITEM",
+                "TransactionCurrency"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"SalesOrder\", \"SalesOrderItem\", \"Material\", \"NetAmount\", \"TransactionCurrency\"\r\nFROM \"I_SALESORDERITEM\""
+    }
+  }
+}
