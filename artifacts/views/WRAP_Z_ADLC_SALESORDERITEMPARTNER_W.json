@@ -1,0 +1,104 @@
+{
+  "definitions": {
+    "WRAP_Z_ADLC_SALESORDERITEMPARTNER_W": {
+      "kind": "entity",
+      "@EndUserText.label": "Relational Dataset wrapper over existing source Z_ADLC_SALESORDERITEMPARTNER_W.",
+      "elements": {
+        "SalesOrder": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrder",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "SalesOrderItem": {
+          "type": "cds.String",
+          "@EndUserText.label": "SalesOrderItem",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "PartnerFunction": {
+          "type": "cds.String",
+          "@EndUserText.label": "PartnerFunction",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Customer": {
+          "type": "cds.String",
+          "@EndUserText.label": "Customer",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Supplier": {
+          "type": "cds.String",
+          "@EndUserText.label": "Supplier",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        },
+        "Partner": {
+          "type": "cds.String",
+          "@EndUserText.label": "Partner",
+          "@DataWarehouse.native.dataType": "NVARCHAR",
+          "length": 255
+        }
+      },
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Z_ADLC_SALESORDERITEMPARTNER_W"
+            ],
+            "as": "Z_ADLC_SALESORDERITEMPARTNER_W"
+          },
+          "columns": [
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "SalesOrder"
+              ]
+            },
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "SalesOrderItem"
+              ]
+            },
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "PartnerFunction"
+              ]
+            },
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "Customer"
+              ]
+            },
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "Supplier"
+              ]
+            },
+            {
+              "ref": [
+                "Z_ADLC_SALESORDERITEMPARTNER_W",
+                "Partner"
+              ]
+            }
+          ]
+        }
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "DATA_STRUCTURE"
+        }
+      ],
+      "@DataWarehouse.consumption.external": false,
+      "@DataWarehouse.sqlEditor.query": "SELECT \"SalesOrder\", \"SalesOrderItem\", \"PartnerFunction\", \"Customer\", \"Supplier\", \"Partner\"\r\nFROM \"Z_ADLC_SALESORDERITEMPARTNER_W\""
+    }
+  }
+}
