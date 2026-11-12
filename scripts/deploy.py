@@ -90,6 +90,52 @@ NUMERIC_CDS_TYPES = {
 }
 
 
+def is_fact_entity(entity_def):
+    """
+    Checks if an entity definition in CSN JSON represents a Fact layer.
+    Prioritizes '@ObjectModel.modelingPattern': {'#': 'ANALYTICAL_FACT'} in the file content,
+    along with other standard Datasphere CSN annotations.
+    """
+    if not isinstance(entity_def, dict):
+        return False
+
+    # 1. Primary check: @ObjectModel.modelingPattern == ANALYTICAL_FACT
+    modeling_pattern = entity_def.get("@ObjectModel.modelingPattern")
+    if isinstance(modeling_pattern, dict):
+        val = str(modeling_pattern.get("#", "")).upper()
+        if "ANALYTICAL_FACT" in val or "FACT" in val:
+            return True
+    elif isinstance(modeling_pattern, str):
+        val = modeling_pattern.upper()
+        if "ANALYTICAL_FACT" in val or "FACT" in val:
+            return True
+
+    # 2. Check @ObjectModel.dataCategory
+    data_cat = entity_def.get("@ObjectModel.dataCategory")
+    if isinstance(data_cat, dict):
+        val = str(data_cat.get("#", "")).upper()
+        if "FACT" in val:
+            return True
+    elif isinstance(data_cat, str) and "FACT" in data_cat.upper():
+        return True
+
+    # 3. Check @Analytics.dataCategory
+    analytics_cat = entity_def.get("@Analytics.dataCategory")
+    if isinstance(analytics_cat, dict):
+        val = str(analytics_cat.get("#", "")).upper()
+        if "FACT" in val:
+            return True
+    elif isinstance(analytics_cat, str) and "FACT" in analytics_cat.upper():
+        return True
+
+    # 4. Check semanticUsage
+    usage = entity_def.get("semanticUsage")
+    if isinstance(usage, str) and "FACT" in usage.upper():
+        return True
+
+    return False
+
+
 def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
     """Dynamically builds an Analytic Model CSN definition from a Fact View entity."""
     am_name = f"{model_prefix}{fact_name}"
@@ -101,10 +147,13 @@ def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
 
     for col_name, col_def in fact_elements.items():
         col_type = col_def.get("type", "").lower()
+        agg = col_def.get("@Aggregation.default")
+        measure_type = col_def.get("@AnalyticsDetails.measureType")
         is_measure = (
             col_type in NUMERIC_CDS_TYPES or
             col_def.get("@Analytics.measure") is True or
-            col_def.get("@Aggregation.default") is not None
+            agg is not None or
+            measure_type is not None
         )
 
         new_element = {}
@@ -238,27 +287,18 @@ def deploy_artifact(cli_base, artifact, space_id, auto_deploy=True, dry_run=Fals
             else:
                 technical_name_key = technical_name
 
-            if v_entity:
-                is_fact = (
-                    v_entity.get("@Analytics.dataCategory", "").upper() == "FACT" or
-                    v_entity.get("semanticUsage", "").upper() == "FACT" or
-                    "FACT" in technical_name.upper()
-                )
-                if is_fact:
-                    modified = False
-                    if v_entity.get("@DataWarehouse.consumption.external") is not True:
-                        v_entity["@DataWarehouse.consumption.external"] = True
-                        modified = True
-                    if v_entity.get("@Analytics.dataCategory", "").upper() != "FACT":
-                        v_entity["@Analytics.dataCategory"] = "FACT"
-                        modified = True
+            if v_entity and is_fact_entity(v_entity):
+                modified = False
+                if v_entity.get("@DataWarehouse.consumption.external") is not True:
+                    v_entity["@DataWarehouse.consumption.external"] = True
+                    modified = True
 
-                    if modified:
-                        v_defs[technical_name_key] = v_entity
-                        with open(file_path, "w", encoding="utf-8") as f:
-                            json.dump(v_data, f, indent=2)
-                            f.write("\n")
-                        print(f"[INFO] Auto-ensured '{technical_name}' has '@DataWarehouse.consumption.external: true' and '@Analytics.dataCategory: FACT'")
+                if modified:
+                    v_defs[technical_name_key] = v_entity
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        json.dump(v_data, f, indent=2)
+                        f.write("\n")
+                    print(f"[INFO] Auto-ensured Fact view '{technical_name}' has '@DataWarehouse.consumption.external: true' (Exposed for Consumption)")
         except Exception as f_err:
             print(f"[WARN] Could not verify Fact consumption annotations: {f_err}")
 
@@ -387,13 +427,7 @@ def main():
                             entity_def = v
                             break
 
-                is_fact = (
-                    entity_def.get("@Analytics.dataCategory", "").upper() == "FACT" or
-                    entity_def.get("semanticUsage", "").upper() == "FACT" or
-                    "FACT" in entity_name.upper()
-                )
-
-                if is_fact:
+                if entity_def and is_fact_entity(entity_def):
                     am_prefix = config.get("settings", {}).get("analytic_model_prefix", "AM_")
                     am_name = f"{am_prefix}{entity_name}"
 

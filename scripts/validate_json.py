@@ -18,6 +18,52 @@ from pathlib import Path
 TECHNICAL_NAME_REGEX = re.compile(r"^[A-Za-z0-9_]{1,128}$")
 
 
+def is_fact_entity(entity_def):
+    """
+    Checks if an entity definition in CSN JSON represents a Fact layer.
+    Prioritizes '@ObjectModel.modelingPattern': {'#': 'ANALYTICAL_FACT'} directly inside the file,
+    along with other standard CSN modeling annotations.
+    """
+    if not isinstance(entity_def, dict):
+        return False
+
+    # 1. Primary check: @ObjectModel.modelingPattern == ANALYTICAL_FACT
+    modeling_pattern = entity_def.get("@ObjectModel.modelingPattern")
+    if isinstance(modeling_pattern, dict):
+        val = str(modeling_pattern.get("#", "")).upper()
+        if "ANALYTICAL_FACT" in val or "FACT" in val:
+            return True
+    elif isinstance(modeling_pattern, str):
+        val = modeling_pattern.upper()
+        if "ANALYTICAL_FACT" in val or "FACT" in val:
+            return True
+
+    # 2. Check @ObjectModel.dataCategory
+    data_cat = entity_def.get("@ObjectModel.dataCategory")
+    if isinstance(data_cat, dict):
+        val = str(data_cat.get("#", "")).upper()
+        if "FACT" in val:
+            return True
+    elif isinstance(data_cat, str) and "FACT" in data_cat.upper():
+        return True
+
+    # 3. Check @Analytics.dataCategory
+    analytics_cat = entity_def.get("@Analytics.dataCategory")
+    if isinstance(analytics_cat, dict):
+        val = str(analytics_cat.get("#", "")).upper()
+        if "FACT" in val:
+            return True
+    elif isinstance(analytics_cat, str) and "FACT" in analytics_cat.upper():
+        return True
+
+    # 4. Check semanticUsage
+    usage = entity_def.get("semanticUsage")
+    if isinstance(usage, str) and "FACT" in usage.upper():
+        return True
+
+    return False
+
+
 def load_deployment_config(config_path="config/deployment.json"):
     """Loads deployment configuration containing supported artifact types."""
     cfg_file = Path(config_path)
@@ -92,20 +138,17 @@ def validate_artifact(artifact_entry, supported_types):
                     f"Definition '{next(iter(definitions))}' is missing required 'kind' property."
                 )
             else:
-                # 5. Fact layer auto-remediation (Ensure Exposed for Consumption and FACT category)
+                # 5. Fact layer auto-remediation (Detected via @ObjectModel.modelingPattern in file content)
                 if artifact_type == "views":
-                    is_fact = (
-                        entity.get("@Analytics.dataCategory", "").upper() == "FACT" or
-                        entity.get("semanticUsage", "").upper() == "FACT" or
-                        "FACT" in technical_name.upper()
-                    )
-                    if is_fact:
+                    if is_fact_entity(entity):
                         modified = False
                         if entity.get("@DataWarehouse.consumption.external") is not True:
                             entity["@DataWarehouse.consumption.external"] = True
                             modified = True
-                        if entity.get("@Analytics.dataCategory", "").upper() != "FACT":
-                            entity["@Analytics.dataCategory"] = "FACT"
+
+                        # Ensure modeling pattern is explicitly defined
+                        if not entity.get("@ObjectModel.modelingPattern"):
+                            entity["@ObjectModel.modelingPattern"] = {"#": "ANALYTICAL_FACT"}
                             modified = True
 
                         if modified:
@@ -113,7 +156,7 @@ def validate_artifact(artifact_entry, supported_types):
                                 with open(file_path, "w", encoding="utf-8") as f:
                                     json.dump(data, f, indent=2)
                                     f.write("\n")
-                                print(f"  [AUTO-FIX] Injected '@DataWarehouse.consumption.external: true' and '@Analytics.dataCategory: FACT' into {file_path}")
+                                print(f"  [AUTO-FIX] Set '@DataWarehouse.consumption.external: true' (Exposed for Consumption) for Fact in {file_path}")
                             except Exception as write_err:
                                 errors.append(f"Failed to auto-update Fact annotations in {file_path}: {write_err}")
     else:
