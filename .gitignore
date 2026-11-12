@@ -9,6 +9,7 @@ __pycache__/
 .env
 secrets.json
 changed_artifacts.json
+.tmp_*
 *.log
 
 # OS & IDE

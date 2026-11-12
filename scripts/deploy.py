@@ -157,8 +157,12 @@ def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
         if not isinstance(col_def, dict):
             continue
 
-        label = col_def.get("@EndUserText.label", col_name)
+        # Skip associations and compositions (not scalar projection columns)
         col_type = str(col_def.get("type", "")).lower()
+        if "target" in col_def or col_type in ("cds.association", "cds.composition"):
+            continue
+
+        label = col_def.get("@EndUserText.label", col_name)
         agg = col_def.get("@Aggregation.default")
         measure_type = col_def.get("@AnalyticsDetails.measureType")
         is_key = col_def.get("key", False)
