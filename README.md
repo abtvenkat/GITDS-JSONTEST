@@ -102,6 +102,8 @@ Configure the following secrets under **Repository Settings** ➔ **Secrets and 
 | **8. Error Capturing** | CLI stdout/stderr are captured line-by-line; on any non-zero exit code, deployment immediately halts to prevent dependent failures. |
 | **9. Duplicate Prevention** | Handled by reading object status before deciding whether to call `create` or `update`. |
 | **10. Renamed / Deleted Files** | Handled in `detect_changes.py`: git renames detect the new path; deletions are safely logged and excluded from automatic deletion per POC scope. |
+| **11. Fact Auto-Remediation** | Both `validate_json.py` and `deploy.py` check views representing a Fact layer. If `@DataWarehouse.consumption.external: true` or `@Analytics.dataCategory: FACT` is missing, the pipeline automatically injects them into the file before deployment. |
+| **12. Automated Analytic Model Creation** | Configured via `auto_create_analytic_model_for_facts` in `config/deployment.json`. Once a Fact view is deployed into runtime, the pipeline automatically derives an Analytic Model (`AM_<FACT_NAME>`), classifies numeric fields as measures and text/dates as dimensions, and deploys it immediately to Datasphere. |
 
 ---
 

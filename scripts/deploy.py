@@ -80,6 +80,69 @@ def order_artifacts(artifacts, mapping):
     return ordered
 
 
+NUMERIC_CDS_TYPES = {
+    "cds.decimal",
+    "cds.integer",
+    "cds.integer64",
+    "cds.double",
+    "cds.float",
+    "cds.decimalfloat"
+}
+
+
+def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
+    """Dynamically builds an Analytic Model CSN definition from a Fact View entity."""
+    am_name = f"{model_prefix}{fact_name}"
+    fact_label = fact_entity.get("@EndUserText.label", fact_name)
+    am_label = f"Analytic Model for {fact_label}"
+
+    elements = {}
+    fact_elements = fact_entity.get("elements", {})
+
+    for col_name, col_def in fact_elements.items():
+        col_type = col_def.get("type", "").lower()
+        is_measure = (
+            col_type in NUMERIC_CDS_TYPES or
+            col_def.get("@Analytics.measure") is True or
+            col_def.get("@Aggregation.default") is not None
+        )
+
+        new_element = {}
+        for prop in ["type", "length", "precision", "scale"]:
+            if prop in col_def:
+                new_element[prop] = col_def[prop]
+
+        if is_measure and not col_def.get("key", False):
+            new_element["semantics"] = {
+                "measure": True,
+                "aggregation": "sum"
+            }
+        else:
+            new_element["semantics"] = {
+                "dimension": True
+            }
+
+        elements[col_name] = new_element
+
+    return {
+        "$schema": "https://sap.com/datasphere/csn/v1.0",
+        "definitions": {
+            am_name: {
+                "kind": "analyticModel",
+                "@EndUserText.label": am_label,
+                "sources": {
+                    fact_name: {
+                        "entity": {
+                            "ref": [fact_name]
+                        }
+                    }
+                },
+                "elements": elements
+            }
+        }
+    }
+
+
 def run_cli_command(command_parts, dry_run=False, mask_secrets=True):
     """Executes a command using subprocess, returns (exit_code, stdout, stderr)."""
     display_cmd = " ".join(command_parts)
@@ -158,6 +221,46 @@ def deploy_artifact(cli_base, artifact, space_id, auto_deploy=True, dry_run=Fals
     print(f"Source file: {file_path}")
     print(f"Target space: {space_id}")
     print(f"{'='*70}")
+
+    # Auto-ensure Fact views are exposed for consumption prior to deployment
+    if artifact_type == "views":
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                v_data = json.load(f)
+            v_defs = v_data.get("definitions", {})
+            v_entity = v_defs.get(technical_name)
+            if not v_entity:
+                for k, v in v_defs.items():
+                    if k.split(".")[-1] == technical_name:
+                        v_entity = v
+                        technical_name_key = k
+                        break
+            else:
+                technical_name_key = technical_name
+
+            if v_entity:
+                is_fact = (
+                    v_entity.get("@Analytics.dataCategory", "").upper() == "FACT" or
+                    v_entity.get("semanticUsage", "").upper() == "FACT" or
+                    "FACT" in technical_name.upper()
+                )
+                if is_fact:
+                    modified = False
+                    if v_entity.get("@DataWarehouse.consumption.external") is not True:
+                        v_entity["@DataWarehouse.consumption.external"] = True
+                        modified = True
+                    if v_entity.get("@Analytics.dataCategory", "").upper() != "FACT":
+                        v_entity["@Analytics.dataCategory"] = "FACT"
+                        modified = True
+
+                    if modified:
+                        v_defs[technical_name_key] = v_entity
+                        with open(file_path, "w", encoding="utf-8") as f:
+                            json.dump(v_data, f, indent=2)
+                            f.write("\n")
+                        print(f"[INFO] Auto-ensured '{technical_name}' has '@DataWarehouse.consumption.external: true' and '@Analytics.dataCategory: FACT'")
+        except Exception as f_err:
+            print(f"[WARN] Could not verify Fact consumption annotations: {f_err}")
 
     # Check if object already exists
     exists = check_object_exists(cli_base, artifact_type, space_id, technical_name, dry_run)
@@ -269,6 +372,70 @@ def main():
             print(f"[ERROR] Deployment failed for {artifact['artifact_type']}/{artifact['technical_name']}!", file=sys.stderr)
             # Break on first error to prevent broken dependencies cascade
             break
+
+        # APPROACH B HOOK: Auto-create Analytic Model for successfully deployed Fact Views
+        auto_am = config.get("settings", {}).get("auto_create_analytic_model_for_facts", False)
+        if auto_am and artifact.get("artifact_type") == "views":
+            try:
+                fact_data = load_json(artifact["file_path"])
+                entity_name = artifact["technical_name"]
+                definitions = fact_data.get("definitions", {})
+                entity_def = definitions.get(entity_name, {})
+                if not entity_def:
+                    for k, v in definitions.items():
+                        if k.split(".")[-1] == entity_name:
+                            entity_def = v
+                            break
+
+                is_fact = (
+                    entity_def.get("@Analytics.dataCategory", "").upper() == "FACT" or
+                    entity_def.get("semanticUsage", "").upper() == "FACT" or
+                    "FACT" in entity_name.upper()
+                )
+
+                if is_fact:
+                    am_prefix = config.get("settings", {}).get("analytic_model_prefix", "AM_")
+                    am_name = f"{am_prefix}{entity_name}"
+
+                    # Skip hook if an explicit analytic model file is already in the queue
+                    already_in_queue = any(
+                        a.get("artifact_type") == "analytic-models" and a.get("technical_name") == am_name
+                        for a in artifacts
+                    )
+                    if already_in_queue:
+                        print(f"\n[HOOK] Analytic Model '{am_name}' already exists in deployment queue. Skipping hook.")
+                    else:
+                        print(f"\n[HOOK] Fact view '{entity_name}' deployed successfully.")
+                        print(f"[HOOK] Building and deploying Analytic Model '{am_name}' into space '{space_id}'...")
+
+                        am_payload = build_analytic_model_csn(entity_name, entity_def, am_prefix)
+                        temp_am_path = Path(f".tmp_{am_name}.json")
+                        with open(temp_am_path, "w", encoding="utf-8") as tmp_f:
+                            json.dump(am_payload, tmp_f, indent=2)
+
+                        try:
+                            am_artifact = {
+                                "artifact_type": "analytic-models",
+                                "technical_name": am_name,
+                                "file_path": str(temp_am_path.resolve())
+                            }
+                            am_res = deploy_artifact(
+                                cli_base=args.cli_bin,
+                                artifact=am_artifact,
+                                space_id=space_id,
+                                auto_deploy=config.get("settings", {}).get("auto_deploy", True),
+                                dry_run=args.dry_run
+                            )
+                            results.append(am_res)
+                            if not am_res["success"]:
+                                failed_count += 1
+                                print(f"[ERROR] Auto-deployment of Analytic Model '{am_name}' failed!", file=sys.stderr)
+                                break
+                        finally:
+                            if temp_am_path.exists():
+                                temp_am_path.unlink()
+            except Exception as hook_err:
+                print(f"[WARN] Failed to execute Analytic Model hook for {artifact['technical_name']}: {hook_err}", file=sys.stderr)
 
     # Summary
     print("\n" + "=" * 70)

@@ -91,6 +91,31 @@ def validate_artifact(artifact_entry, supported_types):
                 errors.append(
                     f"Definition '{next(iter(definitions))}' is missing required 'kind' property."
                 )
+            else:
+                # 5. Fact layer auto-remediation (Ensure Exposed for Consumption and FACT category)
+                if artifact_type == "views":
+                    is_fact = (
+                        entity.get("@Analytics.dataCategory", "").upper() == "FACT" or
+                        entity.get("semanticUsage", "").upper() == "FACT" or
+                        "FACT" in technical_name.upper()
+                    )
+                    if is_fact:
+                        modified = False
+                        if entity.get("@DataWarehouse.consumption.external") is not True:
+                            entity["@DataWarehouse.consumption.external"] = True
+                            modified = True
+                        if entity.get("@Analytics.dataCategory", "").upper() != "FACT":
+                            entity["@Analytics.dataCategory"] = "FACT"
+                            modified = True
+
+                        if modified:
+                            try:
+                                with open(file_path, "w", encoding="utf-8") as f:
+                                    json.dump(data, f, indent=2)
+                                    f.write("\n")
+                                print(f"  [AUTO-FIX] Injected '@DataWarehouse.consumption.external: true' and '@Analytics.dataCategory: FACT' into {file_path}")
+                            except Exception as write_err:
+                                errors.append(f"Failed to auto-update Fact annotations in {file_path}: {write_err}")
     else:
         errors.append("'definitions' property is required to derive the technical name.")
 

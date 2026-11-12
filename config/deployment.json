@@ -25,7 +25,10 @@
   "settings": {
     "default_space": "DEV",
     "auto_deploy": true,
-    "verbose": true
+    "verbose": true,
+    "auto_create_analytic_model_for_facts": true,
+    "analytic_model_prefix": "AM_",
+    "enforce_fact_exposed_for_consumption": true
   }
 }
 
