@@ -120,8 +120,21 @@ def validate_artifact(artifact_entry, supported_types):
         if not isinstance(definitions, dict) or len(definitions) == 0:
             errors.append("'definitions' property must be a non-empty JSON object.")
         else:
-            definition_name = next(iter(definitions)).split(".")[-1]
-            technical_name = definition_name
+            stem = file_path.stem
+            target_key = None
+            for k in definitions:
+                if k.split(".")[-1] == stem:
+                    target_key = k
+                    break
+            if not target_key:
+                for k, v in definitions.items():
+                    if isinstance(v, dict) and v.get("kind") in ("entity", "analyticModel"):
+                        target_key = k
+                        break
+            if not target_key:
+                target_key = next(iter(definitions))
+
+            technical_name = target_key.split(".")[-1]
             artifact_entry["technical_name"] = technical_name
 
             if not TECHNICAL_NAME_REGEX.match(technical_name):
@@ -130,12 +143,12 @@ def validate_artifact(artifact_entry, supported_types):
                     "Must be 1-128 alphanumeric characters or underscores, no spaces."
                 )
 
-            entity = definitions[next(iter(definitions))]
+            entity = definitions[target_key]
             if not isinstance(entity, dict):
-                errors.append(f"Definition '{next(iter(definitions))}' must be an object.")
+                errors.append(f"Definition '{target_key}' must be an object.")
             elif "kind" not in entity:
                 errors.append(
-                    f"Definition '{next(iter(definitions))}' is missing required 'kind' property."
+                    f"Definition '{target_key}' is missing required 'kind' property."
                 )
             else:
                 # 5. Fact layer auto-remediation (Detected via @ObjectModel.modelingPattern in file content)

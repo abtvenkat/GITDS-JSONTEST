@@ -162,26 +162,30 @@ def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
                 new_element[prop] = col_def[prop]
 
         if is_measure and not col_def.get("key", False):
-            new_element["semantics"] = {
-                "measure": True,
-                "aggregation": "sum"
-            }
+            new_element["@Analytics.measure"] = True
+            new_element["@Aggregation.default"] = {"#": "SUM"}
         else:
-            new_element["semantics"] = {
-                "dimension": True
-            }
+            new_element["@Analytics.dimension"] = True
 
         elements[col_name] = new_element
 
     return {
-        "$schema": "https://sap.com/datasphere/csn/v1.0",
         "definitions": {
             am_name: {
-                "kind": "analyticModel",
+                "kind": "entity",
                 "@EndUserText.label": am_label,
-                "sources": {
-                    fact_name: {
-                        "entity": {
+                "@ObjectModel.modelingPattern": {
+                    "#": "ANALYTICAL_QUERY"
+                },
+                "@ObjectModel.supportedCapabilities": [
+                    {
+                        "#": "ANALYTICAL_QUERY"
+                    }
+                ],
+                "@Analytics.query": True,
+                "query": {
+                    "SELECT": {
+                        "from": {
                             "ref": [fact_name]
                         }
                     }
@@ -313,6 +317,7 @@ def deploy_artifact(cli_base, artifact, space_id, auto_deploy=True, dry_run=Fals
         artifact_type,
         action,
         "--space", space_id,
+        "--technical-name", technical_name,
         "--file-path", f'"{file_path}"'
     ]
 

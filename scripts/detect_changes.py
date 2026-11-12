@@ -66,12 +66,23 @@ def extract_artifact_info(path_str, status_char):
 
 
 def extract_technical_name(file_path):
-    """Reads the technical name from the first JSON definition."""
+    """Reads the primary technical name from definitions, prioritizing entity kind or file stem."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         definitions = data.get("definitions")
         if isinstance(definitions, dict) and definitions:
+            stem = Path(file_path).stem
+            # 1. Exact match with file stem
+            for k in definitions:
+                if k.split(".")[-1] == stem:
+                    return stem
+
+            # 2. First definition with kind in ('entity', 'analyticModel'), skipping 'context'
+            for k, v in definitions.items():
+                if isinstance(v, dict) and v.get("kind") in ("entity", "analyticModel"):
+                    return k.split(".")[-1]
+
             return next(iter(definitions)).split(".")[-1]
     except (OSError, json.JSONDecodeError):
         pass
