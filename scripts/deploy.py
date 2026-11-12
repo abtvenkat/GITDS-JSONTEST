@@ -137,60 +137,150 @@ def is_fact_entity(entity_def):
 
 
 def build_analytic_model_csn(fact_name, fact_entity, model_prefix="AM_"):
-    """Dynamically builds an Analytic Model CSN definition from a Fact View entity."""
+    """
+    Dynamically builds an Analytic Model CSN definition from a Fact View entity.
+    Produces valid Datasphere Analytic Model CSN with both definitions (ANALYTICAL_CUBE)
+    and businessLayerDefinitions matching SAP Datasphere expectations.
+    """
     am_name = f"{model_prefix}{fact_name}"
     fact_label = fact_entity.get("@EndUserText.label", fact_name)
     am_label = f"Analytic Model for {fact_label}"
 
     elements = {}
+    attributes = {}
+    measures = {}
+    query_columns = []
+
     fact_elements = fact_entity.get("elements", {})
 
     for col_name, col_def in fact_elements.items():
-        col_type = col_def.get("type", "").lower()
+        if not isinstance(col_def, dict):
+            continue
+
+        label = col_def.get("@EndUserText.label", col_name)
+        col_type = str(col_def.get("type", "")).lower()
         agg = col_def.get("@Aggregation.default")
         measure_type = col_def.get("@AnalyticsDetails.measureType")
+        is_key = col_def.get("key", False)
+
         is_measure = (
-            col_type in NUMERIC_CDS_TYPES or
-            col_def.get("@Analytics.measure") is True or
-            agg is not None or
-            measure_type is not None
+            not is_key and (
+                measure_type is not None or
+                agg is not None or
+                col_def.get("@Analytics.measure") is True or
+                col_type in NUMERIC_CDS_TYPES
+            )
         )
 
-        new_element = {}
-        for prop in ["type", "length", "precision", "scale"]:
-            if prop in col_def:
-                new_element[prop] = col_def[prop]
+        query_columns.append({
+            "ref": [fact_name, col_name],
+            "as": col_name
+        })
 
-        if is_measure and not col_def.get("key", False):
-            new_element["@Analytics.measure"] = True
-            new_element["@Aggregation.default"] = {"#": "SUM"}
+        if is_measure:
+            elements[col_name] = {
+                "@EndUserText.label": label,
+                "@AnalyticsDetails.measureType": {
+                    "#": "BASE"
+                }
+            }
+            measures[col_name] = {
+                "measureType": "AnalyticModelMeasureType.FactSourceMeasure",
+                "measureMapping": {
+                    fact_name: {
+                        "key": col_name
+                    }
+                },
+                "text": label,
+                "isAuxiliary": False
+            }
         else:
-            new_element["@Analytics.dimension"] = True
-
-        elements[col_name] = new_element
+            elements[col_name] = {
+                "@EndUserText.label": label
+            }
+            attributes[col_name] = {
+                "attributeType": "AnalyticModelAttributeType.FactSourceAttribute",
+                "attributeMapping": {
+                    fact_name: {
+                        "key": col_name
+                    }
+                },
+                "text": label,
+                "duplicated": False
+            }
 
     return {
+        "$version": "1.0",
+        "version": {
+            "csn": "1.0"
+        },
+        "meta": {
+            "creator": "CDS Compiler v1.19.2"
+        },
         "definitions": {
             am_name: {
                 "kind": "entity",
                 "@EndUserText.label": am_label,
+                "elements": elements,
                 "@ObjectModel.modelingPattern": {
-                    "#": "ANALYTICAL_QUERY"
+                    "#": "ANALYTICAL_CUBE"
                 },
                 "@ObjectModel.supportedCapabilities": [
                     {
-                        "#": "ANALYTICAL_QUERY"
+                        "#": "ANALYTICAL_PROVIDER"
+                    },
+                    {
+                        "#": "_DWC_AM_EDITABLE_DIMENSION_NAMES"
                     }
                 ],
-                "@Analytics.query": True,
+                "@DataWarehouse.editorType": {
+                    "#": "DWCQueryModelEditor"
+                },
+                "@DataWarehouse.hanaCatalog.viewType": {
+                    "#": "CALCULATION_VIEW"
+                },
                 "query": {
                     "SELECT": {
                         "from": {
-                            "ref": [fact_name]
-                        }
+                            "ref": [fact_name],
+                            "as": fact_name
+                        },
+                        "columns": query_columns,
+                        "mixin": {}
                     }
                 },
-                "elements": elements
+                "_meta": {
+                    "dependencies": {
+                        "folderAssignment": None
+                    }
+                }
+            }
+        },
+        "businessLayerDefinitions": {
+            am_name: {
+                "identifier": {
+                    "key": am_name
+                },
+                "text": am_label,
+                "sourceModel": {
+                    "factSources": {
+                        fact_name: {
+                            "text": fact_name,
+                            "dataEntity": {
+                                "key": fact_name
+                            },
+                            "parameterMappings": {}
+                        }
+                    },
+                    "dimensionSources": {}
+                },
+                "exposedAssociations": {},
+                "attributes": attributes,
+                "measures": measures,
+                "crossCalculations": {},
+                "version": "1.7.3",
+                "supportedCapabilities": {},
+                "variables": {}
             }
         }
     }

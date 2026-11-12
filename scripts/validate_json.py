@@ -120,12 +120,24 @@ def validate_artifact(artifact_entry, supported_types):
         if not isinstance(definitions, dict) or len(definitions) == 0:
             errors.append("'definitions' property must be a non-empty JSON object.")
         else:
-            stem = file_path.stem
+            bld = data.get("businessLayerDefinitions")
             target_key = None
-            for k in definitions:
-                if k.split(".")[-1] == stem:
-                    target_key = k
-                    break
+            if isinstance(bld, dict) and bld:
+                bld_key = next(iter(bld))
+                if bld_key in definitions:
+                    target_key = bld_key
+                else:
+                    for k in definitions:
+                        if k.split(".")[-1] == bld_key.split(".")[-1]:
+                            target_key = k
+                            break
+
+            if not target_key:
+                stem = file_path.stem
+                for k in definitions:
+                    if k.split(".")[-1] == stem:
+                        target_key = k
+                        break
             if not target_key:
                 for k, v in definitions.items():
                     if isinstance(v, dict) and v.get("kind") in ("entity", "analyticModel"):
